@@ -1,0 +1,86 @@
+---
+title: "Rugby World Cup"
+output: html_notebook
+---
+
+# Analysing data on England players at the Rugby World Cup
+
+```{r}
+#Use this line if you don't have rio installed
+# install.packages("rio")
+#Import data
+rwcdata <- rio::import("England Rugby.xlsx", sheet = 2)
+#Import specific data for chart
+regionsandpositions <- rio::import("rugby-world-cup.csv")
+colnames(regionsandpositions) <- c("Region","Position","Players","regtotal")
+```
+
+## The stacked bar chart
+
+We've adapted some code from [the BBC R Cookbook](https://bbc.github.io/rcookbook/#make_a_stacked_bar_chart).
+
+First we install the packages needed:
+
+```{r}
+install.packages('devtools')
+devtools::install_github('bbc/bbplot')
+```
+
+
+```{r}
+#This line of code installs the pacman page if you do not have it installed - if you do, it simply loads the package
+if(!require(pacman))install.packages("pacman")
+
+pacman::p_load('dplyr', 'tidyr', 'gapminder',
+               'ggplot2',  'ggalt',
+               'forcats', 'R.utils', 'png', 
+               'grid', 'ggpubr', 'scales',
+               'bbplot')
+```
+
+This section of code we don't use because it generates the data in the right format - we've already done that.
+
+```{r}
+'
+#prepare data
+stacked_df <- gapminder %>% 
+  filter(year == 2007) %>%
+  mutate(lifeExpGrouped = cut(lifeExp, 
+                    breaks = c(0, 50, 65, 80, 90),
+                    labels = c("Under 50", "50-65", "65-80", "80+"))) %>%
+  group_by(continent, lifeExpGrouped) %>%
+  summarise(continentPop = sum(as.numeric(pop)))
+
+#set order of stacks by changing factor levels
+stacked_df$lifeExpGrouped = factor(stacked_df$lifeExpGrouped, levels = rev(levels(stacked_df$lifeExpGrouped)))
+'
+```
+
+Here we generate the stacked bar chart
+
+```{r}
+#create plot - specify data frame and x and y axes
+stackedbarforrob <- ggplot(data = regionsandpositions, 
+            aes(x = reorder(Region,regtotal), y = Players))+
+  #Specify fill colour is based on position
+  geom_col(aes(fill = Position), width = 0.7) +
+  #Add the BBC styling
+  bbc_style() +
+  #Add colour scheme
+  scale_fill_viridis_d(direction = -1) +
+  #Add a black line at the bottom of the bars
+  geom_hline(yintercept = 0, size = 1, colour = "#333333") +
+  #Add the legend (subtitle can be filled too if you want)
+  labs(title = "Where England's rugby players come from",
+       subtitle = "") +
+  #Position the legend
+  theme(legend.position = "top", 
+        legend.justification = "left") +
+  guides(fill = guide_legend(reverse = TRUE)) 
+#Flip from vertical to horizontal bars
+stackedbarforrob <- stackedbarforrob + coord_flip()
+#Show the results
+stackedbarforrob
+#Save because we can
+ggsave("stackedbarforrob.png", width = 10, height = 7, units = "in")
+```
