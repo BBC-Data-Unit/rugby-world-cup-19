@@ -1,0 +1,26 @@
+Region,Position,COUNTA of Position,Total
+London,Flanker,1,7
+London,Full back,1,7
+London,Hooker,1,7
+London,Lock,2,7
+London,Prop,1,7
+London,Wing,1,7
+South West,Centre,1,6
+South West,Hooker,1,6
+South West,Lock,1,6
+South West,Prop,1,6
+South West,Wing,2,6
+North West,Flanker,1,4
+North West,Fly half,2,4
+North West,Scrum half,1,4
+South East,Centre,1,4
+South East,Full back,1,4
+South East,Lock,1,4
+South East,Prop,1,4
+East,Flanker,1,2
+East,Hooker,1,2
+East Midlands,Centre,1,2
+East Midlands,Prop,1,2
+West Midlands,Scrum half,1,1
+North East,Scrum half,0,0
+Yorkshire and the Humber,Scrum half,0,0
